@@ -39,13 +39,13 @@ public class WhatsappRepository {
 
     public String changeAdmin(User approver, User user, Group group) throws Exception {
         if (!groupUserMap.containsKey(group)) {
-            throw new Exception("Group not exist");
+            throw new Exception("Group does not exist");
         }
         if (!adminMap.get(group).equals(approver)) {
-            throw new Exception("Approver don't have permissions");
+            throw new Exception("Approver deos not have rights");
         }
         if (!userExist(group, user)) {
-            throw new Exception("User is not in group");
+            throw new Exception("User is not a participant");
         }
 
         adminMap.put(group, user);
@@ -53,7 +53,7 @@ public class WhatsappRepository {
     }
 
     public boolean userExist(Group group, User sender) {
-        List<User> users = new ArrayList<>();
+        List<User> users = groupUserMap.get(group) ;
         for (User user : users) {
             if (user.equals(sender)) return true;
         }
@@ -64,10 +64,11 @@ public class WhatsappRepository {
     public Group createGroup(List<User> users) {
         if (users.size() == 2) return createPersonalChat(users);
 
-        customGroupCount++;
+        this.customGroupCount++;
         String grpName = "Group" + customGroupCount;
         Group group = new Group(grpName, users.size());
-        groupUserMap.put(group, (List<User>) users.get(0));
+        groupUserMap.put(group, users);
+        adminMap.put(group,users.get(0)) ;
         return group ;
     }
 
